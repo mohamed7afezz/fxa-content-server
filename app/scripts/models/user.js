@@ -369,7 +369,7 @@ define(function (require, exports, module) {
       var self = this;
       return account.signIn(password, relier, options)
         .then(function () {
-          if (! account.get('verified')) {
+          if (! account.get('verified') && account.get('challengeReason') !== 'signin') {
             return account.retrySignUp(relier, options);
           }
         })

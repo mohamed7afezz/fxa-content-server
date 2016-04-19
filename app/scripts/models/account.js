@@ -51,6 +51,8 @@ define(function (require, exports, module) {
 
   var DEFAULTS = _.extend({
     accessToken: undefined,
+    challengeMethod: undefined,
+    challengeReason: undefined,
     customizeSync: undefined,
     declinedSyncEngines: undefined,
     keyFetchToken: undefined,
@@ -313,7 +315,8 @@ define(function (require, exports, module) {
 
         if (password) {
           return self._fxaClient.signIn(email, password, relier, {
-            reason: options.reason
+            reason: options.reason,
+            resume: options.resume
           });
         } else if (sessionToken) {
           // We have a cached Sync session so just check that it hasn't expired.
