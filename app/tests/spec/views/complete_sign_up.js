@@ -335,7 +335,7 @@ define(function (require, exports, module) {
               });
 
               it('redirects to /signin_complete', function () {
-                assert.isTrue(view.navigate.calledWith('signin_complete', { type: 'signin_confirmed' }));
+                assert.isTrue(view.navigate.calledWith('signin_complete', { type: 'sign_in_confirmed' }));
               });
             });
           });

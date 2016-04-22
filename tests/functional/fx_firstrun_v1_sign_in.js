@@ -5,105 +5,115 @@
 define([
   'intern',
   'intern!object',
-  'intern/node_modules/dojo/node!xmlhttprequest',
-  'app/bower_components/fxa-js-client/fxa-client',
   'tests/lib/helpers',
   'tests/functional/lib/helpers'
-], function (intern, registerSuite, nodeXMLHttpRequest, FxaClient,
-  TestHelpers, FunctionalHelpers) {
+], function (intern, registerSuite, TestHelpers, FunctionalHelpers) {
   var config = intern.config;
-  var AUTH_SERVER_ROOT = config.fxaAuthRoot;
   var PAGE_URL = config.fxaContentRoot + 'signin?context=iframe&service=sync';
-  var NO_REDIRECT_URL = PAGE_URL + '&haltAfterSignIn=true';
+  /*var NO_REDIRECT_URL = PAGE_URL + '&haltAfterSignIn=true';*/
 
   var email;
   var PASSWORD = '12345678';
-  var client;
 
-  var listenForFxaCommands = FunctionalHelpers.listenForWebChannelMessage;
+  var thenify = FunctionalHelpers.thenify;
+
+  var clearBrowserState = thenify(FunctionalHelpers.clearBrowserState);
+  var createUser = FunctionalHelpers.createUser;
+  var fillOutSignIn = thenify(FunctionalHelpers.fillOutSignIn);
+  var noSuchElement = FunctionalHelpers.noSuchElement;
+  var openPage = thenify(FunctionalHelpers.openPage);
+  var openVerificationLinkDifferentBrowser = thenify(FunctionalHelpers.openVerificationLinkDifferentBrowser);
+  var openVerificationLinkInNewTab = thenify(FunctionalHelpers.openVerificationLinkInNewTab);
   var respondToWebChannelMessage = FunctionalHelpers.respondToWebChannelMessage;
+  var testElementExists = FunctionalHelpers.testElementExists;
+  var testIsBrowserNotified = FunctionalHelpers.testIsBrowserNotified;
 
   registerSuite({
     name: 'Firstrun sign_in',
 
     beforeEach: function () {
-      var self = this;
       email = TestHelpers.createEmail();
-      client = new FxaClient(AUTH_SERVER_ROOT, {
-        xhr: nodeXMLHttpRequest.XMLHttpRequest
-      });
 
-      return client.signUp(email, PASSWORD, { preVerified: true })
-        .then(function () {
-          return FunctionalHelpers.clearBrowserState(self);
-        });
+      return this.remote
+        .then(clearBrowserState(this));
     },
 
-    afterEach: function () {
-      return FunctionalHelpers.clearBrowserState(this);
+    'verified, verify same browser': function () {
+      return this.remote
+        .then(createUser(email, PASSWORD, { preVerified: true }))
+        .then(openPage(this, PAGE_URL, '#fxa-signin-header'))
+        .then(respondToWebChannelMessage(this, 'fxaccounts:can_link_account', { ok: true } ))
+
+        .then(fillOutSignIn(this, email, PASSWORD))
+        .then(testIsBrowserNotified(this, 'fxaccounts:can_link_account'))
+        .then(testIsBrowserNotified(this, 'fxaccounts:login'))
+        .then(testElementExists('#fxa-confirm-signin-header'))
+
+        .then(openVerificationLinkInNewTab(this, email, 0))
+        .switchToWindow('newwindow')
+          .then(testElementExists('#fxa-sign-in-confirmation-complete-header'))
+          .closeCurrentWindow()
+        .switchToWindow('')
+
+        .then(testElementExists('#fxa-sign-in-confirmation-complete-header'));
     },
 
-    'sign in with an already existing account': function () {
-      var self = this;
+    'verified, verify different browser - from original tab\'s P.O.V.': function () {
+      return this.remote
+        .then(createUser(email, PASSWORD, { preVerified: true }))
+        .then(openPage(this, PAGE_URL, '#fxa-signin-header'))
+        .then(respondToWebChannelMessage(this, 'fxaccounts:can_link_account', { ok: true } ))
 
-      return FunctionalHelpers.openPage(this, PAGE_URL, '#fxa-signin-header')
-        .execute(listenForFxaCommands)
+        .then(fillOutSignIn(this, email, PASSWORD))
+        .then(testIsBrowserNotified(this, 'fxaccounts:can_link_account'))
+        .then(testIsBrowserNotified(this, 'fxaccounts:login'))
+        .then(testElementExists('#fxa-confirm-signin-header'))
 
-        .then(respondToWebChannelMessage(self, 'fxaccounts:can_link_account', { ok: true } ))
+        .then(openVerificationLinkDifferentBrowser(email))
 
-
-        .then(function () {
-          return FunctionalHelpers.fillOutSignIn(self, email, PASSWORD);
-        })
-
-        .then(FunctionalHelpers.testIsBrowserNotified(self, 'fxaccounts:can_link_account'))
-        .then(FunctionalHelpers.testIsBrowserNotified(self, 'fxaccounts:login'))
-
-        .findByCssSelector('#fxa-settings-header')
-        .end()
-
-        // user should be unable to sign out.
-        .then(FunctionalHelpers.noSuchElement(self, '#signout'))
-        .end();
+        .then(testElementExists('#fxa-sign-in-confirmation-complete-header'));
     },
 
-    'sign in with an existing account with the `haltAfterSignIn=true` query parameter': function () {
-      var self = this;
+    'unverified': function () {
+      return this.remote
+        .then(createUser(email, PASSWORD, { preVerified: false }))
+        .then(openPage(this, PAGE_URL, '#fxa-signin-header'))
+        .then(respondToWebChannelMessage(this, 'fxaccounts:can_link_account', { ok: true } ))
 
-      return FunctionalHelpers.openPage(this, NO_REDIRECT_URL, '#fxa-signin-header')
-        .execute(listenForFxaCommands)
+        .then(fillOutSignIn(this, email, PASSWORD))
+        .then(testIsBrowserNotified(this, 'fxaccounts:can_link_account'))
+        .then(testIsBrowserNotified(this, 'fxaccounts:login'))
 
-        .then(respondToWebChannelMessage(self, 'fxaccounts:can_link_account', { ok: true } ))
-
-
-        .then(function () {
-          return FunctionalHelpers.fillOutSignIn(self, email, PASSWORD);
-        })
-
-        .then(FunctionalHelpers.testIsBrowserNotified(self, 'fxaccounts:can_link_account'))
-        .then(FunctionalHelpers.testIsBrowserNotified(self, 'fxaccounts:login'))
-
-        .then(FunctionalHelpers.noSuchElement(self, '#fxa-settings-header'))
-        .end();
+        .then(testElementExists('#fxa-confirm-header'));
     },
 
-    'sign in, cancel merge warning': function () {
-      var self = this;
-      return FunctionalHelpers.openPage(this, PAGE_URL, '#fxa-signin-header')
-        .execute(listenForFxaCommands)
+    /*
+    'with an existing account with the `haltAfterSignIn=true` query parameter': function () {
+      return this.remote
+        .then(openPage(this, NO_REDIRECT_URL, '#fxa-signin-header'))
+        .then(respondToWebChannelMessage(this, 'fxaccounts:can_link_account', { ok: true } ))
 
-        .then(respondToWebChannelMessage(self, 'fxaccounts:can_link_account', { ok: false } ))
+        .then(fillOutSignIn(this, email, PASSWORD))
+        .then(testIsBrowserNotified(this, 'fxaccounts:can_link_account'))
+        .then(testIsBrowserNotified(this, 'fxaccounts:login'))
 
+        .then(testElementExists('#fxa-signin-header'))
+        .then(noSuchElement(this, '#fxa-settings-header'));
+    },
+    */
 
-        .then(function () {
-          return FunctionalHelpers.fillOutSignIn(self, email, PASSWORD);
-        })
+    'signin, cancel merge warning': function () {
+      return this.remote
+        .then(createUser(email, PASSWORD, { preVerified: true }))
+        .then(openPage(this, PAGE_URL, '#fxa-signin-header'))
+        .then(respondToWebChannelMessage(this, 'fxaccounts:can_link_account', { ok: false } ))
 
-        .then(FunctionalHelpers.testIsBrowserNotified(self, 'fxaccounts:can_link_account'))
+        .then(fillOutSignIn(this, email, PASSWORD))
+        .then(testIsBrowserNotified(this, 'fxaccounts:can_link_account'))
 
         // user should not transition to the next screen
-        .then(FunctionalHelpers.noSuchElement(self, '#fxa-settings-header'))
-        .end();
+        .then(testElementExists('#fxa-signin-header'))
+        .then(noSuchElement(this, '#fxa-confirm-signin-header'));
     }
   });
 });

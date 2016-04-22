@@ -74,7 +74,7 @@ define(function (require, exports, module) {
         this.navigate('signup_complete');
       } else {
         this.navigate('signin_complete', {
-          type: 'signin_confirmed'
+          type: 'sign_in_confirmed'
         });
       }
     },

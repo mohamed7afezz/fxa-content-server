@@ -47,9 +47,8 @@ define(function (require, exports, module) {
 
     context: function () {
       var email = this.getAccount().get('email');
-      var type = this.model.get('type');
-      var isSignIn = EmailVerificationReasons.is(type, 'SIGN_IN');
-      var isSignUp = EmailVerificationReasons.is(type, 'SIGN_UP');
+      var isSignIn = this._isSignIn();
+      var isSignUp = this._isSignUp();
 
       return {
         // Back button is only available for signin for now. We haven't fully
@@ -78,11 +77,26 @@ define(function (require, exports, module) {
     },
 
     _getMissingSessionTokenScreen: function () {
-      var isSignUp = EmailVerificationReasons.is(
-          this.model.get('type'), 'SIGN_UP');
-
-      var screenUrl = isSignUp ? 'signup' : 'signin';
+      var screenUrl = this._isSignUp() ? 'signup' : 'signin';
       return this.broker.transformLink(screenUrl);
+    },
+
+    _isSignUp: function () {
+      return EmailVerificationReasons.is(this.model.get('type'), 'SIGN_UP');
+    },
+
+    _isSignIn: function () {
+      return EmailVerificationReasons.is(this.model.get('type'), 'SIGN_IN');
+    },
+
+    _navigateToCompleteScreen: function () {
+      if (this._isSignUp()) {
+        this.navigate('signup_complete');
+      } else {
+        this.navigate('signin_complete', {
+          type: 'sign_in_confirmed'
+        });
+      }
     },
 
     beforeRender: function () {
@@ -133,7 +147,7 @@ define(function (require, exports, module) {
                   success: t('Account verified successfully')
                 });
               } else {
-                self.navigate('signup_complete');
+                return self._navigateToCompleteScreen();
               }
             });
         }, function (err) {

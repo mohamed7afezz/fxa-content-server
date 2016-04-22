@@ -418,19 +418,21 @@ define(function (require, exports, module) {
     });
 
     describe('complete', function () {
-      it('direct access redirects to `/settings`', function () {
+      beforeEach(function () {
         sinon.stub(view.fxaClient, 'recoveryEmailStatus', function () {
           return p({
             verified: true
           });
         });
 
-        sinon.stub(relier, 'isDirectAccess', function () {
-          return true;
-        });
-
         sinon.stub(view, 'navigate', function (page) {
           // do nothing
+        });
+      });
+
+      it('direct access redirects to `/settings`', function () {
+        sinon.stub(relier, 'isDirectAccess', function () {
+          return true;
         });
 
         return view.afterVisible()
@@ -439,25 +441,37 @@ define(function (require, exports, module) {
           });
       });
 
-      it('non-direct-access redirects to `/signup_complete`', function () {
-        sinon.stub(view.fxaClient, 'recoveryEmailStatus', function () {
-          return p({
-            verified: true
+      describe('signup', function () {
+        beforeEach(function () {
+          sinon.stub(relier, 'isDirectAccess', function () {
+            return false;
           });
+
+          model.set('type', SIGNUP_REASON);
+
+          return view.afterVisible();
         });
 
-        sinon.stub(relier, 'isDirectAccess', function () {
-          return false;
+        it('redirects to `signup_complete`', function () {
+          assert.isTrue(view.navigate.calledWith('signup_complete'));
         });
+      });
 
-        sinon.stub(view, 'navigate', function (page) {
-          // do nothing
-        });
-
-        return view.afterVisible()
-          .then(function () {
-            assert.isTrue(view.navigate.calledWith('signup_complete'));
+      describe('signin', function () {
+        beforeEach(function () {
+          sinon.stub(relier, 'isDirectAccess', function () {
+            return false;
           });
+
+          model.set('type', SIGNIN_REASON);
+
+          return view.afterVisible();
+        });
+
+        it('redirects to `/signin_complete`', function () {
+          assert.isTrue(view.navigate.calledWith(
+                'signin_complete', { type: 'sign_in_confirmed' }));
+        });
       });
     });
 
