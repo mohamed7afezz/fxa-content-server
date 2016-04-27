@@ -9,8 +9,8 @@ define(function (require, exports, module) {
   var Backbone = require('backbone');
   var BaseBroker = require('models/auth_brokers/base');
   var chai = require('chai');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var Duration = require('duration');
-  var EmailVerificationReasons = require('lib/email-verification-reasons');
   var FxaClient = require('lib/fxa-client');
   var Metrics = require('lib/metrics');
   var Notifier = require('lib/channels/notifier');
@@ -23,8 +23,8 @@ define(function (require, exports, module) {
   var View = require('views/confirm');
   var WindowMock = require('../../mocks/window');
 
-  var SIGNIN_REASON = EmailVerificationReasons.SIGN_IN;
-  var SIGNUP_REASON = EmailVerificationReasons.SIGN_UP;
+  var SIGNIN_REASON = ChallengeReasons.SIGN_IN;
+  var SIGNUP_REASON = ChallengeReasons.SIGN_UP;
 
   var assert = chai.assert;
 
@@ -163,7 +163,7 @@ define(function (require, exports, module) {
 
         describe('sign in', function () {
           beforeEach(function () {
-            model.set('type', 'sign_in');
+            model.set('type', ChallengeReasons.SIGN_IN);
 
             return view.render();
           });
@@ -469,8 +469,7 @@ define(function (require, exports, module) {
         });
 
         it('redirects to `/signin_complete`', function () {
-          assert.isTrue(view.navigate.calledWith(
-                'signin_complete', { type: 'sign_in_confirmed' }));
+          assert.isTrue(view.navigate.calledWith('signin_complete'));
         });
       });
     });

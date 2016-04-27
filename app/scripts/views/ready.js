@@ -10,6 +10,7 @@
 define(function (require, exports, module) {
   'use strict';
 
+  var ChallengeReasons = require('lib/challenge-reasons');
   var Cocktail = require('cocktail');
   var Constants = require('lib/constants');
   var FormView = require('views/form');
@@ -48,18 +49,14 @@ define(function (require, exports, module) {
       headerTitle: t('Password reset'),
       readyToSyncText: FX_SYNC_WILL_BEGIN_MOMENTARILY
     },
-    // sign_in_complete is only shown to sync for now.
-    sign_in: {
+    // signin_complete is only shown to Sync for now.
+    signin: {
       headerId: 'fxa-sign-in-complete-header',
-      headerTitle: t('Welcome to Sync'),
+      headerTitle: t('Sign-in confirmed'),
+      //readyToSyncText: t('You are now ready to use %(serviceName)s')
       readyToSyncText: FX_SYNC_WILL_BEGIN_MOMENTARILY
     },
-    sign_in_confirmed: {
-      headerId: 'fxa-sign-in-confirmation-complete-header',
-      headerTitle: t('Sign-in confirmed'),
-      readyToSyncText: t('You are now ready to use %(serviceName)s')
-    },
-    sign_up: {
+    signup: {
       headerId: 'fxa-sign-up-complete-header',
       headerTitle: t('Account verified'),
       readyToSyncText: t('You are now ready to use %(serviceName)s')
@@ -77,9 +74,7 @@ define(function (require, exports, module) {
 
       this._able = options.able;
 
-      if (! this.model.has('type')) {
-        this.model.set('type', options.type);
-      }
+      this.type = options.type;
       this.language = options.language;
 
       if (this._shouldShowProceedButton()) {
@@ -104,16 +99,16 @@ define(function (require, exports, module) {
     },
 
     _getHeaderId: function () {
-      return TEMPLATE_INFO[this.model.get('type')].headerId;
+      return TEMPLATE_INFO[this.type].headerId;
     },
 
     _getHeaderTitle: function () {
-      var title = TEMPLATE_INFO[this.model.get('type')].headerTitle;
+      var title = TEMPLATE_INFO[this.type].headerTitle;
       return this.translateInTemplate(title);
     },
 
     _getReadyToSyncText: function () {
-      var readyToSyncText = TEMPLATE_INFO[this.model.get('type')].readyToSyncText;
+      var readyToSyncText = TEMPLATE_INFO[this.type].readyToSyncText;
       return this.translateInTemplate(readyToSyncText);
     },
 
@@ -144,7 +139,7 @@ define(function (require, exports, module) {
       var redirectUri = this.relier.get('redirectUri');
       var verificationRedirect = this.relier.get('verificationRedirect');
 
-      return !! (this.is('sign_up') &&
+      return !! (this.is(ChallengeReasons.SIGN_UP) &&
                  redirectUri &&
                  Url.isNavigable(redirectUri) &&
                  verificationRedirect === Constants.VERIFICATION_REDIRECT_ALWAYS);
@@ -178,7 +173,7 @@ define(function (require, exports, module) {
         language: this.language,
         metrics: this.metrics,
         service: this.relier.get('service'),
-        type: this.model.get('type')
+        type: this.type
       };
 
       var marketingSnippet;
@@ -194,7 +189,7 @@ define(function (require, exports, module) {
     },
 
     is: function (type) {
-      return this.model.get('type') === type;
+      return this.type === type;
     }
   });
 

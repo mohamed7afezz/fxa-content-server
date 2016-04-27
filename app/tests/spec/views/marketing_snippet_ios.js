@@ -7,6 +7,7 @@ define(function (require, exports, module) {
 
   var Able = require('lib/able');
   var chai = require('chai');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var Metrics = require('lib/metrics');
   var sinon = require('sinon');
   var View = require('views/marketing_snippet_ios');
@@ -21,7 +22,7 @@ define(function (require, exports, module) {
       options = options || {};
 
       options.service = 'sync';
-      options.type = 'sign_up';
+      options.type = ChallengeReasons.SIGN_UP;
       options.language = options.language || 'en';
 
       options.window = windowMock;

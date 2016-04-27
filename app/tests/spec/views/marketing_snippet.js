@@ -6,6 +6,7 @@ define(function (require, exports, module) {
   'use strict';
 
   var chai = require('chai');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var Metrics = require('lib/metrics');
   var View = require('views/marketing_snippet');
   var WindowMock = require('../../mocks/window');
@@ -41,7 +42,7 @@ define(function (require, exports, module) {
         createView({
           language: 'en',
           service: 'sync',
-          type: 'sign_up'
+          type: ChallengeReasons.SIGN_UP
         });
 
         return view.render()
@@ -55,7 +56,7 @@ define(function (require, exports, module) {
 
         createView({
           language: 'en',
-          type: 'sign_up'
+          type: ChallengeReasons.SIGN_UP
         });
 
         return view.render()
@@ -70,7 +71,7 @@ define(function (require, exports, module) {
         createView({
           language: 'en',
           service: 'sync',
-          type: 'sign_up'
+          type: ChallengeReasons.SIGN_UP
         });
 
         return view.render()
@@ -84,7 +85,7 @@ define(function (require, exports, module) {
         createView({
           language: 'en',
           service: 'sync',
-          type: 'sign_up'
+          type: ChallengeReasons.SIGN_UP
         });
 
         return view.render()
@@ -97,7 +98,7 @@ define(function (require, exports, module) {
         createView({
           language: 'ru',
           surveyPercentage: 0,
-          type: 'sign_up'
+          type: ChallengeReasons.SIGN_UP
         });
 
         return view.render()
@@ -110,7 +111,7 @@ define(function (require, exports, module) {
         createView({
           language: 'de',
           service: 'sync',
-          type: 'sign_up'
+          type: ChallengeReasons.SIGN_UP
         });
 
         return view.render()
@@ -130,7 +131,7 @@ define(function (require, exports, module) {
         createView({
           language: 'de',
           service: 'sync',
-          type: 'sign_up'
+          type: ChallengeReasons.SIGN_UP
         });
 
         return view.render()

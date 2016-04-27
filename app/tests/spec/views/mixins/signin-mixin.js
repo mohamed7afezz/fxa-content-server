@@ -7,8 +7,9 @@ define(function (require, exports, module) {
 
   var Account = require('models/account');
   var assert = require('chai').assert;
-  var Backbone = require('backbone');
   var AuthBroker = require('models/auth_brokers/base');
+  var Backbone = require('backbone');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var p = require('lib/promise');
   var Relier = require('models/reliers/relier');
   var SignInMixin = require('views/mixins/signin-mixin');
@@ -187,7 +188,7 @@ define(function (require, exports, module) {
           assert.lengthOf(args, 2);
           assert.equal(args[0], 'confirm');
           assert.strictEqual(args[1].account, account);
-          assert.equal(args[1].type, 'sign_up');
+          assert.equal(args[1].type, ChallengeReasons.SIGN_UP);
         });
       });
 
@@ -214,7 +215,7 @@ define(function (require, exports, module) {
           assert.lengthOf(args, 2);
           assert.equal(args[0], 'confirm');
           assert.strictEqual(args[1].account, account);
-          assert.equal(args[1].type, 'sign_in');
+          assert.equal(args[1].type, ChallengeReasons.SIGN_IN);
         });
       });
 

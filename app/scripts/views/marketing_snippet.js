@@ -13,6 +13,7 @@ define(function (require, exports, module) {
   'use strict';
 
   var BaseView = require('views/base');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var Cocktail = require('cocktail');
   var Constants = require('lib/constants');
   var MarketingMixin = require('views/mixins/marketing-mixin');
@@ -37,9 +38,9 @@ define(function (require, exports, module) {
     },
 
     _shouldShowSignUpMarketing: function () {
-      var isSignUp = this._type === 'sign_up';
-      var isSync = this._service === Constants.SYNC_SERVICE;
       var isFirefoxMobile = this._isFirefoxMobile();
+      var isSignUp = ChallengeReasons.is(this._type, 'SIGN_UP');
+      var isSync = this._service === Constants.SYNC_SERVICE;
 
       // If the user is completing a signup for sync and ALWAYS
       // show the marketing snippet.

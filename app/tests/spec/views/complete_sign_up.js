@@ -9,7 +9,7 @@ define(function (require, exports, module) {
   var Broker = require('models/auth_brokers/base');
   var chai = require('chai');
   var Constants = require('lib/constants');
-  var EmailVerificationReasons = require('lib/email-verification-reasons');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var MarketingEmailErrors = require('lib/marketing-email-errors');
   var Metrics = require('lib/metrics');
   var Notifier = require('lib/channels/notifier');
@@ -306,7 +306,7 @@ define(function (require, exports, module) {
 
             describe('for signup', function () {
               beforeEach(function () {
-                view.model.set('type', EmailVerificationReasons.SIGN_UP);
+                view.model.set('type', ChallengeReasons.SIGN_UP);
                 return view.render();
               });
 
@@ -330,12 +330,12 @@ define(function (require, exports, module) {
 
             describe('for signin', function () {
               beforeEach(function () {
-                view.model.set('type', EmailVerificationReasons.SIGN_IN);
+                view.model.set('type', ChallengeReasons.SIGN_IN);
                 return view.render();
               });
 
               it('redirects to /signin_complete', function () {
-                assert.isTrue(view.navigate.calledWith('signin_complete', { type: 'sign_in_confirmed' }));
+                assert.isTrue(view.navigate.calledWith('signin_complete'));
               });
             });
           });

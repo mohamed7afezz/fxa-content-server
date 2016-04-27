@@ -10,7 +10,7 @@ define(function (require, exports, module) {
   var BaseView = require('views/base');
   var Cocktail = require('cocktail');
   var Constants = require('lib/constants');
-  var EmailVerificationReasons = require('lib/email-verification-reasons');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var ExperimentMixin = require('views/mixins/experiment-mixin');
   var FormView = require('views/form');
   var OpenGmailMixin = require('views/mixins/open-gmail-mixin');
@@ -37,7 +37,7 @@ define(function (require, exports, module) {
       this._account = this.user.initAccount(this.model.get('account'));
 
       if (! this.model.has('type')) {
-        this.model.set('type', EmailVerificationReasons.SIGN_UP);
+        this.model.set('type', ChallengeReasons.SIGN_UP);
       }
     },
 
@@ -82,20 +82,18 @@ define(function (require, exports, module) {
     },
 
     _isSignUp: function () {
-      return EmailVerificationReasons.is(this.model.get('type'), 'SIGN_UP');
+      return ChallengeReasons.is(this.model.get('type'), 'SIGN_UP');
     },
 
     _isSignIn: function () {
-      return EmailVerificationReasons.is(this.model.get('type'), 'SIGN_IN');
+      return ChallengeReasons.is(this.model.get('type'), 'SIGN_IN');
     },
 
     _navigateToCompleteScreen: function () {
       if (this._isSignUp()) {
         this.navigate('signup_complete');
       } else {
-        this.navigate('signin_complete', {
-          type: 'sign_in_confirmed'
-        });
+        this.navigate('signin_complete');
       }
     },
 

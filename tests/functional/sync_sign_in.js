@@ -53,14 +53,14 @@ define([
 
         .then(openVerificationLinkInNewTab(this, email, 0))
         .switchToWindow('newwindow')
-          .then(testElementExists('#fxa-sign-in-confirmation-complete-header'))
+          .then(testElementExists('#fxa-sign-in-complete-header'))
           .closeCurrentWindow()
         .switchToWindow('')
 
         // about:accounts will take over post-verification, no transition
         .sleep(2000)
         .then(testElementExists('#fxa-confirm-signin-header'))
-        .then(noSuchElement(this, '#fxa-sign-in-confirmation-complete-header'));
+        .then(noSuchElement(this, '#fxa-sign-in-complete-header'));
     },
 
     'verified, verify different browser - from original tab\'s P.O.V.': function () {
@@ -78,7 +78,7 @@ define([
         // about:accounts will take over post-verification, no transition
         .sleep(2000)
         .then(testElementExists('#fxa-confirm-signin-header'))
-        .then(noSuchElement(this, '#fxa-sign-in-confirmation-complete-header'));
+        .then(noSuchElement(this, '#fxa-sign-in-complete-header'));
     },
 
 

@@ -12,6 +12,7 @@ define(function (require, exports, module) {
   var AvatarGravatarView = require('../views/settings/avatar_gravatar');
   var Backbone = require('backbone');
   var CannotCreateAccountView = require('../views/cannot_create_account');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var ChangePasswordView = require('../views/settings/change_password');
   var ChooseWhatToSyncView = require('../views/choose_what_to_sync');
   var ClearStorageView = require('../views/clear_storage');
@@ -62,19 +63,19 @@ define(function (require, exports, module) {
   var Router = Backbone.Router.extend({
     routes: {
       '(/)': 'redirectToSignupOrSettings',
-      'account_unlock_complete(/)': createViewHandler(ReadyView, { type: 'account_unlock' }),
+      'account_unlock_complete(/)': createViewHandler(ReadyView, { type: ChallengeReasons.ACCOUNT_UNLOCK }),
       'cannot_create_account(/)': createViewHandler(CannotCreateAccountView),
       'choose_what_to_sync(/)': createViewHandler(ChooseWhatToSyncView),
       'clear(/)': createViewHandler(ClearStorageView),
       'complete_reset_password(/)': createViewHandler(CompleteResetPasswordView),
-      'complete_signin(/)': createViewHandler(CompleteSignUpView, { type: 'sign_in' }),
+      'complete_signin(/)': createViewHandler(CompleteSignUpView, { type: ChallengeReasons.SIGN_IN }),
       'complete_unlock_account(/)': createViewHandler(CompleteAccountUnlockView),
       'confirm(/)': createViewHandler(ConfirmView),
       'confirm_account_unlock(/)': createViewHandler(ConfirmAccountUnlockView),
       'confirm_reset_password(/)': createViewHandler(ConfirmResetPasswordView),
       'cookies_disabled(/)': createViewHandler(CookiesDisabledView),
       'force_auth(/)': createViewHandler(ForceAuthView),
-      'force_auth_complete(/)': createViewHandler(ReadyView, { type: 'force_auth' }),
+      'force_auth_complete(/)': createViewHandler(ReadyView, { type: ChallengeReasons.FORCE_AUTH }),
       'legal(/)': createViewHandler(LegalView),
       'legal/privacy(/)': createViewHandler(PpView),
       'legal/terms(/)': createViewHandler(TosView),
@@ -85,7 +86,7 @@ define(function (require, exports, module) {
       'openid/login(/)': createViewHandler(OpenIdLoginView),
       'openid/start(/)': createViewHandler(OpenIdStartView),
       'reset_password(/)': createViewHandler(ResetPasswordView),
-      'reset_password_complete(/)': createViewHandler(ReadyView, { type: 'reset_password' }),
+      'reset_password_complete(/)': createViewHandler(ReadyView, { type: ChallengeReasons.PASSWORD_RESET }),
       'settings(/)': createViewHandler(SettingsView),
       'settings/avatar/camera(/)': createChildViewHandler(AvatarCameraView, SettingsView),
       'settings/avatar/change(/)': createChildViewHandler(AvatarChangeView, SettingsView),
@@ -98,13 +99,13 @@ define(function (require, exports, module) {
       'settings/devices(/)': createChildViewHandler(DevicesView, SettingsView),
       'settings/display_name(/)': createChildViewHandler(DisplayNameView, SettingsView),
       'signin(/)': createViewHandler(SignInView),
-      'signin_complete(/)': createViewHandler(ReadyView, { type: 'sign_in' }),
+      'signin_complete(/)': createViewHandler(ReadyView, { type: ChallengeReasons.SIGN_IN }),
       'signin_permissions(/)': createViewHandler(PermissionsView, { type: 'sign_in' }),
       'signup(/)': createViewHandler(SignUpView),
-      'signup_complete(/)': createViewHandler(ReadyView, { type: 'sign_up' }),
+      'signup_complete(/)': createViewHandler(ReadyView, { type: ChallengeReasons.SIGN_UP }),
       'signup_permissions(/)': createViewHandler(PermissionsView, { type: 'sign_up' }),
       'unexpected_error(/)': createViewHandler(UnexpectedErrorView),
-      'verify_email(/)': createViewHandler(CompleteSignUpView, { type: 'sign_up' })
+      'verify_email(/)': createViewHandler(CompleteSignUpView, { type: ChallengeReasons.SIGN_UP })
     },
 
     initialize: function (options) {

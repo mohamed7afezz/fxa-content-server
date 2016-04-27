@@ -51,11 +51,11 @@ define([
 
         .then(openVerificationLinkInNewTab(this, email, 0))
         .switchToWindow('newwindow')
-          .then(testElementExists('#fxa-sign-in-confirmation-complete-header'))
+          .then(testElementExists('#fxa-sign-in-complete-header'))
           .closeCurrentWindow()
         .switchToWindow('')
 
-        .then(testElementExists('#fxa-sign-in-confirmation-complete-header'));
+        .then(testElementExists('#fxa-sign-in-complete-header'));
     },
 
     'verified, verify different browser - from original tab\'s P.O.V.': function () {
@@ -71,7 +71,7 @@ define([
 
         .then(openVerificationLinkDifferentBrowser(email))
 
-        .then(testElementExists('#fxa-sign-in-confirmation-complete-header'));
+        .then(testElementExists('#fxa-sign-in-complete-header'));
     },
 
     'unverified': function () {

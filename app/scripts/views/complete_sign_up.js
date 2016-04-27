@@ -21,7 +21,7 @@ define(function (require, exports, module) {
   var BaseView = require('views/base');
   var Cocktail = require('cocktail');
   var CompleteSignUpTemplate = require('stache!templates/complete_sign_up');
-  var EmailVerificationReasons = require('lib/email-verification-reasons');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var ExperimentMixin = require('views/mixins/experiment-mixin');
   var FormView = require('views/form');
   var MarketingEmailErrors = require('lib/marketing-email-errors');
@@ -62,20 +62,22 @@ define(function (require, exports, module) {
       // verification link
       this._email = this._account.get('email');
 
-      this.model.set('type', options.type || EmailVerificationReasons.SIGN_UP);
+      this.model.set('type', options.type || ChallengeReasons.SIGN_UP);
     },
 
     getAccount: function () {
       return this._account;
     },
 
+    _isSignUp: function () {
+      return ChallengeReasons.is(this.model.get('type'), 'SIGN_UP');
+    },
+
     _navigateToCompleteScreen: function () {
-      if (EmailVerificationReasons.is(this.model.get('type'), 'SIGN_UP')) {
+      if (this._isSignUp()) {
         this.navigate('signup_complete');
       } else {
-        this.navigate('signin_complete', {
-          type: 'sign_in_confirmed'
-        });
+        this.navigate('signin_complete');
       }
     },
 

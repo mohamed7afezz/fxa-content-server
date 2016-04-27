@@ -8,6 +8,7 @@ define(function (require, exports, module) {
   'use strict';
 
   var AuthErrors = require('lib/auth-errors');
+  var ChallengeReasons = require('lib/challenge-reasons');
   var p = require('lib/promise');
 
   module.exports = {
@@ -61,15 +62,15 @@ define(function (require, exports, module) {
         var challengeMethod = account.get('challengeMethod');
         var challengeReason = account.get('challengeReason');
 
-        if (challengeReason === 'signin' && challengeMethod === 'email') {
+        if (challengeReason === ChallengeReasons.SIGN_IN && challengeMethod === 'email') {
           return this.navigate('confirm', {
             account: account,
-            type: 'sign_in'
+            type: ChallengeReasons.SIGN_IN
           });
         } else {
           return this.navigate('confirm', {
             account: account,
-            type: 'sign_up'
+            type: ChallengeReasons.SIGN_UP
           });
         }
       }

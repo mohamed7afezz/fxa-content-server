@@ -3,7 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * List of reasons to verify emails
+ * List of reasons a user must perform some form of verification.
+ * A challenge is currently only an email verification, in the
+ * future SMS and TOTP could also be included.
  */
 
 define(function (require, exports, module) {
@@ -11,9 +13,10 @@ define(function (require, exports, module) {
 
   return {
     ACCOUNT_UNLOCK: 'account_unlock',
-    PASSWORD_RESET: 'password_reset',
-    SIGN_IN: 'sign_in',
-    SIGN_UP: 'sign_up',
+    FORCE_AUTH: 'force_auth',
+    PASSWORD_RESET: 'reset_password',
+    SIGN_IN: 'signin',
+    SIGN_UP: 'signup',
 
     /**
      * Check if the value matches the given type
