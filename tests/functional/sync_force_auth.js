@@ -14,9 +14,12 @@ define([
   var createUser = FunctionalHelpers.createUser;
   var fillOutForceAuth = FunctionalHelpers.fillOutForceAuth;
   var listenForFxaCommands = FxDesktopHelpers.listenForFxaCommands;
+  var noSuchElement = FunctionalHelpers.noSuchElement;
   var openForceAuth = FunctionalHelpers.openForceAuth;
+  var openVerificationLinkDifferentBrowser = thenify(FunctionalHelpers.openVerificationLinkDifferentBrowser);
+  var openVerificationLinkInNewTab = thenify(FunctionalHelpers.openVerificationLinkInNewTab);
   var testElementExists = FunctionalHelpers.testElementExists;
-  var testIsBrowserNotified = thenify(FxDesktopHelpers.testIsBrowserNotifiedOfMessage);
+  var testIsBrowserNotifiedOfLogin = thenify(FxDesktopHelpers.testIsBrowserNotifiedOfLogin);
 
   var PASSWORD = 'password';
   var email;
@@ -36,23 +39,45 @@ define([
   });
 
   registerSuite({
-    name: 'Firefox Desktop Sync force_auth',
+    name: 'Firefox Desktop Sync v1 force_auth',
 
     beforeEach: function () {
       email = TestHelpers.createEmail();
     },
 
-    'verified': function () {
+    'verified, verify same browser': function () {
       return this.remote
         .then(setupTest(this, true))
 
-        // add a slight delay to ensure the page does not transition
-        .sleep(1000)
+        // for sync, a user must re-confirm their email address.
+        .then(testElementExists('#fxa-confirm-signin-header'))
+        .then(testIsBrowserNotifiedOfLogin(this, email))
 
-        // the page does not transition.
-        .then(testElementExists('#fxa-force-auth-header'))
-        .then(testIsBrowserNotified(this, 'can_link_account'))
-        .then(testIsBrowserNotified(this, 'login'));
+        .then(openVerificationLinkInNewTab(this, email, 0))
+        .switchToWindow('newwindow')
+          .then(testElementExists('#fxa-sign-in-complete-header'))
+          .closeCurrentWindow()
+        .switchToWindow('')
+
+        // about:accounts will take over post-verification, no transition
+        .sleep(2000)
+        .then(testElementExists('#fxa-confirm-signin-header'))
+        .then(noSuchElement(this, '#fxa-sign-in-complete-header'));
+    },
+
+    'verified, verify different browser - from original tab\'s P.O.V.': function () {
+      return this.remote
+        .then(setupTest(this, true))
+
+        .then(testElementExists('#fxa-confirm-signin-header'))
+        .then(testIsBrowserNotifiedOfLogin(this, email))
+
+        .then(openVerificationLinkDifferentBrowser(email))
+
+        // about:accounts will take over post-verification, no transition
+        .sleep(2000)
+        .then(testElementExists('#fxa-confirm-signin-header'))
+        .then(noSuchElement(this, '#fxa-sign-in-complete-header'));
     },
 
     'unverified': function () {
@@ -60,8 +85,7 @@ define([
         .then(setupTest(this, false))
 
         .then(testElementExists('#fxa-confirm-header'))
-        .then(testIsBrowserNotified(this, 'can_link_account'))
-        .then(testIsBrowserNotified(this, 'login'));
+        .then(testIsBrowserNotifiedOfLogin(this, email));
     }
   });
 });
