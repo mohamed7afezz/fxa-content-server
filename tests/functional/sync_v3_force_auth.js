@@ -9,7 +9,6 @@ define([
 ], function (registerSuite, TestHelpers, FunctionalHelpers) {
   var email;
   var PASSWORD = '12345678';
-  var POST_SIGNIN_DELAY = 2000;
 
   var thenify = FunctionalHelpers.thenify;
 
@@ -20,7 +19,6 @@ define([
   var noSuchBrowserNotification = FunctionalHelpers.noSuchBrowserNotification;
   var noSuchElement = FunctionalHelpers.noSuchElement;
   var openForceAuth = FunctionalHelpers.openForceAuth;
-  var openVerificationLinkDifferentBrowser = thenify(FunctionalHelpers.openVerificationLinkDifferentBrowser);
   var openVerificationLinkInNewTab = thenify(FunctionalHelpers.openVerificationLinkInNewTab);
   var respondToWebChannelMessage = FunctionalHelpers.respondToWebChannelMessage;
   var testElementDisabled = FunctionalHelpers.testElementDisabled;

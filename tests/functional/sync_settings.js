@@ -5,112 +5,75 @@
 define([
   'intern',
   'intern!object',
-  'require',
-  'intern/node_modules/dojo/node!xmlhttprequest',
-  'app/bower_components/fxa-js-client/fxa-client',
   'tests/lib/helpers',
   'tests/functional/lib/helpers',
   'tests/functional/lib/fx-desktop'
-], function (intern, registerSuite, require, nodeXMLHttpRequest, FxaClient,
-      TestHelpers, FunctionalHelpers, FxDesktopHelpers) {
-  var listenForFxaCommands = FxDesktopHelpers.listenForFxaCommands;
-  var testIsBrowserNotifiedOfLogin = FxDesktopHelpers.testIsBrowserNotifiedOfLogin;
-  var testIsBrowserNotifiedOfMessage = FxDesktopHelpers.testIsBrowserNotifiedOfMessage;
+], function (intern, registerSuite, TestHelpers, FunctionalHelpers,
+  FxDesktopHelpers) {
+  var thenify = FunctionalHelpers.thenify;
 
-  var clearBrowserState = FunctionalHelpers.clearBrowserState;
-  var fillOutSignIn = FunctionalHelpers.fillOutSignIn;
-  var fillOutChangePassword = FunctionalHelpers.fillOutChangePassword;
-  var fillOutDeleteAccount = FunctionalHelpers.fillOutDeleteAccount;
+  var click = FunctionalHelpers.click;
+  var clearBrowserState = thenify(FunctionalHelpers.clearBrowserState);
+  var createUser = FunctionalHelpers.createUser;
+  var fillOutChangePassword = thenify(FunctionalHelpers.fillOutChangePassword);
+  var fillOutDeleteAccount = thenify(FunctionalHelpers.fillOutDeleteAccount);
+  var fillOutSignIn = thenify(FunctionalHelpers.fillOutSignIn);
+  var listenForFxaCommands = FxDesktopHelpers.listenForFxaCommands;
+  var openPage = thenify(FunctionalHelpers.openPage);
+  var openVerificationLinkDifferentBrowser = thenify(FunctionalHelpers.openVerificationLinkDifferentBrowser);
+  var testElementExists = FunctionalHelpers.testElementExists;
+  var testIsBrowserNotifiedOfLogin = thenify(FxDesktopHelpers.testIsBrowserNotifiedOfLogin);
+  var testIsBrowserNotifiedOfMessage = thenify(FxDesktopHelpers.testIsBrowserNotifiedOfMessage);
+  var visibleByQSA = FunctionalHelpers.visibleByQSA;
 
   var config = intern.config;
-  var AUTH_SERVER_ROOT = config.fxaAuthRoot;
   var SIGNIN_URL = config.fxaContentRoot + 'signin?context=fx_desktop_v1&service=sync';
   var SETTINGS_URL = config.fxaContentRoot + 'settings?context=fx_desktop_v1&service=sync';
 
   var FIRST_PASSWORD = 'password';
   var SECOND_PASSWORD = 'new_password';
   var email;
-  var client;
 
 
   registerSuite({
-    name: 'Firefox Desktop Sync sign_in',
+    name: 'Firefox Desktop Sync v1 settings',
 
     beforeEach: function () {
       email = TestHelpers.createEmail();
 
-      client = new FxaClient(AUTH_SERVER_ROOT, {
-        xhr: nodeXMLHttpRequest.XMLHttpRequest
-      });
+      return this.remote
+        .then(createUser(email, FIRST_PASSWORD, { preVerified: true }))
+        .then(clearBrowserState(this))
+        .then(openPage(this, SIGNIN_URL, '#fxa-signin-header'))
+        .execute(listenForFxaCommands)
+        .then(fillOutSignIn(this, email, FIRST_PASSWORD))
+        .then(testIsBrowserNotifiedOfLogin(this, email, { checkVerified: false }))
+        .then(openVerificationLinkDifferentBrowser(email))
 
-      var self = this;
-      return client.signUp(email, FIRST_PASSWORD, { preVerified: true })
-        .then(function () {
-          return clearBrowserState(self);
-        })
-        .then(function () {
-          return self.remote
-            .get(require.toUrl(SIGNIN_URL))
-            .setFindTimeout(intern.config.pageLoadTimeout)
-
-            .execute(listenForFxaCommands)
-
-            .then(function () {
-              return fillOutSignIn(self, email, FIRST_PASSWORD);
-            })
-
-            .then(function () {
-              return testIsBrowserNotifiedOfLogin(self, email, { checkVerified: true });
-            })
-
-            .get(require.toUrl(SETTINGS_URL))
-            .setFindTimeout(intern.config.pageLoadTimeout)
-            .execute(listenForFxaCommands);
-        });
+        .then(openPage(this, SETTINGS_URL, '#fxa-settings-header'))
+        .execute(listenForFxaCommands);
     },
 
-    afterEach: function () {
-      return clearBrowserState(this);
-    },
 
     'sign in, change the password': function () {
-      var self = this;
-
       return this.remote
+        .then(click('#change-password .settings-unit-toggle'))
+        .then(visibleByQSA('#change-password .settings-unit-details'))
 
-        .findByCssSelector('#change-password .settings-unit-toggle')
-          .click()
-        .end()
-
-        .then(FunctionalHelpers.visibleByQSA('#change-password .settings-unit-details'))
-
-        .then(function () {
-          return fillOutChangePassword(self, FIRST_PASSWORD, SECOND_PASSWORD);
-        })
-
-        .then(function () {
-          return testIsBrowserNotifiedOfMessage(self, 'change_password');
-        });
+        .then(fillOutChangePassword(this, FIRST_PASSWORD, SECOND_PASSWORD))
+        .then(testIsBrowserNotifiedOfMessage(this, 'change_password'));
     },
 
     'sign in, delete the account': function () {
-      var self = this;
-
       return this.remote
 
-        .findByCssSelector('#delete-account .settings-unit-toggle')
-          .click()
-        .end()
+        .then(click('#delete-account.settings-unit-toggle'))
+        .then(visibleByQSA('#delete-account .settings-unit-details'))
 
-        .then(FunctionalHelpers.visibleByQSA('#delete-account .settings-unit-details'))
+        .then(fillOutDeleteAccount(this, FIRST_PASSWORD))
+        .then(testIsBrowserNotifiedOfMessage(this, 'delete_account'))
 
-        .then(function () {
-          return fillOutDeleteAccount(self, FIRST_PASSWORD);
-        })
-
-        .then(function () {
-          return testIsBrowserNotifiedOfMessage(self, 'delete_account');
-        });
+        .then(testElementExists('#fxa-signup-header'));
     }
   });
 });
