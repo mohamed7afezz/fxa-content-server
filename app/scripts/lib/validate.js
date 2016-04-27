@@ -72,8 +72,11 @@ define(function (require, exports, module) {
       }
 
       // codes are fixed length hex strings.
-      return code.length === Constants.CODE_LENGTH &&
-        HEX_STRING.test(code);
+      if (code.length === Constants.CODE_LENGTH) {
+        return HEX_STRING.test(code);
+      }
+
+      return false;
     },
 
     /**

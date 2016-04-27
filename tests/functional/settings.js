@@ -96,27 +96,41 @@ define([
         .end();
     },
 
-    'sign in to desktop context, go to settings, no way to sign out': function () {
+    'visit settings page with an invalid sessionToken redirects to signin': function () {
+      // Changing the password invalidates the current sessionToken
       var self = this;
-      var url = SIGNIN_URL + '?context=' + Constants.FX_DESKTOP_V1_CONTEXT + '&service=sync';
 
-      return FunctionalHelpers.openPage(self, url, '#fxa-signin-header')
-        .execute(listenForFxaCommands)
+      return FunctionalHelpers.clearBrowserState(self)
+        .then(function () {
+          return client.passwordChange(email, FIRST_PASSWORD, SECOND_PASSWORD);
+        })
+        .then(function () {
+          // Expect to get redirected to sign in since the sessionToken is invalid
+          return FunctionalHelpers.openPage(self, SETTINGS_URL, '#fxa-signin-header');
+        });
+    },
+
+    'visit settings page with an unknown uid parameter redirects to signin': function () {
+      var self = this;
+      return FunctionalHelpers.fillOutSignIn(self, email, FIRST_PASSWORD, true)
+        .findById('fxa-settings-header')
+        .end()
 
         .then(function () {
-          return FunctionalHelpers.fillOutSignIn(self, email, FIRST_PASSWORD);
-        })
+          // Expect to get redirected to sign in since the uid is unknown
+          return FunctionalHelpers.openPage(self, SETTINGS_URL + '?uid=baduid', '#fxa-signin-header');
+        });
+    },
+
+    'visit settings page with a known uid does not redirect': function () {
+      var self = this;
+      return FunctionalHelpers.fillOutSignIn(self, email, FIRST_PASSWORD, true)
+        .findById('fxa-settings-header')
+        .end()
 
         .then(function () {
-          return testIsBrowserNotifiedOfLogin(self, email, { checkVerified: true });
-        })
-
-        .then(function () {
-          return FunctionalHelpers.openPage(self, SETTINGS_URL, '#fxa-settings-header');
-        })
-
-        // make sure the sign out element doesn't exist
-        .then(FunctionalHelpers.noSuchElement(self, '#signout'));
+          return FunctionalHelpers.openPage(self, SETTINGS_URL + '?uid=' + accountData.uid, '#fxa-settings-header');
+        });
     },
 
     'sign in, go to settings with setting param set to avatar redirects to avatar change page ': function () {

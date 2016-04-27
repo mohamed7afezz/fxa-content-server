@@ -19,6 +19,7 @@ define([
   var fillOutDeleteAccount = thenify(FunctionalHelpers.fillOutDeleteAccount);
   var fillOutSignIn = thenify(FunctionalHelpers.fillOutSignIn);
   var listenForFxaCommands = FxDesktopHelpers.listenForFxaCommands;
+  var noSuchElement = FunctionalHelpers.noSuchElement;
   var openPage = thenify(FunctionalHelpers.openPage);
   var openVerificationLinkDifferentBrowser = thenify(FunctionalHelpers.openVerificationLinkDifferentBrowser);
   var testElementExists = FunctionalHelpers.testElementExists;
@@ -66,7 +67,6 @@ define([
 
     'sign in, delete the account': function () {
       return this.remote
-
         .then(click('#delete-account.settings-unit-toggle'))
         .then(visibleByQSA('#delete-account .settings-unit-details'))
 
@@ -74,6 +74,12 @@ define([
         .then(testIsBrowserNotifiedOfMessage(this, 'delete_account'))
 
         .then(testElementExists('#fxa-signup-header'));
+    },
+
+    'sign in, no way to sign out': function () {
+      return this.remote
+        // make sure the sign out element doesn't exist
+        .then(noSuchElement(self, '#signout'));
     }
   });
 });
