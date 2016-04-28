@@ -9,7 +9,7 @@ define(function (require, exports, module) {
   var Broker = require('models/auth_brokers/base');
   var chai = require('chai');
   var Constants = require('lib/constants');
-  var ChallengeReasons = require('lib/challenge-reasons');
+  var VerificationReasons = require('lib/verification-reasons');
   var MarketingEmailErrors = require('lib/marketing-email-errors');
   var Metrics = require('lib/metrics');
   var Notifier = require('lib/channels/notifier');
@@ -306,7 +306,7 @@ define(function (require, exports, module) {
 
             describe('for signup', function () {
               beforeEach(function () {
-                view.model.set('type', ChallengeReasons.SIGN_UP);
+                view.model.set('type', VerificationReasons.SIGN_UP);
                 return view.render();
               });
 
@@ -330,7 +330,7 @@ define(function (require, exports, module) {
 
             describe('for signin', function () {
               beforeEach(function () {
-                view.model.set('type', ChallengeReasons.SIGN_IN);
+                view.model.set('type', VerificationReasons.SIGN_IN);
                 return view.render();
               });
 

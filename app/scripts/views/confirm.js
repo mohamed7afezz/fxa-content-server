@@ -10,7 +10,6 @@ define(function (require, exports, module) {
   var BaseView = require('views/base');
   var Cocktail = require('cocktail');
   var Constants = require('lib/constants');
-  var ChallengeReasons = require('lib/challenge-reasons');
   var ExperimentMixin = require('views/mixins/experiment-mixin');
   var FormView = require('views/form');
   var OpenGmailMixin = require('views/mixins/open-gmail-mixin');
@@ -19,6 +18,7 @@ define(function (require, exports, module) {
   var ResumeTokenMixin = require('views/mixins/resume-token-mixin');
   var ServiceMixin = require('views/mixins/service-mixin');
   var Template = require('stache!templates/confirm');
+  var VerificationReasons = require('lib/verification-reasons');
 
   var t = BaseView.t;
 
@@ -37,7 +37,7 @@ define(function (require, exports, module) {
       this._account = this.user.initAccount(this.model.get('account'));
 
       if (! this.model.has('type')) {
-        this.model.set('type', ChallengeReasons.SIGN_UP);
+        this.model.set('type', VerificationReasons.SIGN_UP);
       }
     },
 
@@ -82,11 +82,11 @@ define(function (require, exports, module) {
     },
 
     _isSignUp: function () {
-      return ChallengeReasons.is(this.model.get('type'), 'SIGN_UP');
+      return VerificationReasons.is(this.model.get('type'), 'SIGN_UP');
     },
 
     _isSignIn: function () {
-      return ChallengeReasons.is(this.model.get('type'), 'SIGN_IN');
+      return VerificationReasons.is(this.model.get('type'), 'SIGN_IN');
     },
 
     _navigateToCompleteScreen: function () {

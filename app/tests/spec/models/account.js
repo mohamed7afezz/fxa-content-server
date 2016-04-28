@@ -21,7 +21,9 @@ define(function (require, exports, module) {
   var ProfileErrors = require('lib/profile-errors');
   var Relier = require('models/reliers/relier');
   var sinon = require('sinon');
-  var SIGN_IN_REASONS = require('lib/sign-in-reasons');
+  var SignInReasons = require('lib/sign-in-reasons');
+  var VerificationMethods = require('lib/verification-methods');
+  var VerificationReasons = require('lib/verification-reasons');
 
   var assert = chai.assert;
 
@@ -197,9 +199,9 @@ define(function (require, exports, module) {
           beforeEach(function () {
             sinon.stub(fxaClient, 'signIn', function () {
               return p({
-                challengeMethod: 'email',
-                challengeReason: 'signup',
                 sessionToken: SESSION_TOKEN,
+                verificationMethod: VerificationMethods.EMAIL,
+                verificationReason: VerificationReasons.SIGN_UP,
                 verified: false
               });
             });
@@ -236,7 +238,7 @@ define(function (require, exports, module) {
             });
 
             return account.signIn(PASSWORD, relier, {
-              reason: SIGN_IN_REASONS.ACCOUNT_UNLOCK,
+              reason: SignInReasons.ACCOUNT_UNLOCK,
               resume: 'resume token'
             });
           });
@@ -250,10 +252,10 @@ define(function (require, exports, module) {
           });
 
           it('updates the account with the returned data', function () {
-            assert.equal(account.get('challengeMethod'), 'email');
-            assert.equal(account.get('challengeReason'), 'signup');
             assert.equal(account.get('sessionToken'), SESSION_TOKEN);
             assert.isFalse(account.get('verified'));
+            assert.equal(account.get('verificationMethod'), VerificationMethods.EMAIL);
+            assert.equal(account.get('verificationReason'), VerificationReasons.SIGN_UP);
           });
         });
 
@@ -261,9 +263,9 @@ define(function (require, exports, module) {
           beforeEach(function () {
             sinon.stub(fxaClient, 'signIn', function () {
               return p({
-                challengeMethod: 'email',
-                challengeReason: 'signin',
                 sessionToken: SESSION_TOKEN,
+                verificationMethod: VerificationMethods.EMAIL,
+                verificationReason: VerificationReasons.SIGN_IN,
                 verified: false
               });
             });
@@ -284,8 +286,8 @@ define(function (require, exports, module) {
           });
 
           it('updates the account with the returned data', function () {
-            assert.equal(account.get('challengeMethod'), 'email');
-            assert.equal(account.get('challengeReason'), 'signin');
+            assert.equal(account.get('verificationMethod'), VerificationMethods.EMAIL);
+            assert.equal(account.get('verificationReason'), VerificationReasons.SIGN_IN);
             assert.equal(account.get('sessionToken'), SESSION_TOKEN);
             assert.isFalse(account.get('verified'));
           });
@@ -1269,7 +1271,7 @@ define(function (require, exports, module) {
               newPassword,
               relier,
               {
-                reason: SIGN_IN_REASONS.PASSWORD_CHANGE,
+                reason: SignInReasons.PASSWORD_CHANGE,
                 sessionTokenContext: 'foo'
               }
             ));
@@ -1301,7 +1303,7 @@ define(function (require, exports, module) {
               PASSWORD,
               relier,
               {
-                reason: SIGN_IN_REASONS.PASSWORD_RESET
+                reason: SignInReasons.PASSWORD_RESET
               }
             ));
             // ensure data returned from fxaClient.signIn updates the account

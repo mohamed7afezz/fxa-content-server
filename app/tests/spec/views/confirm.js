@@ -9,7 +9,7 @@ define(function (require, exports, module) {
   var Backbone = require('backbone');
   var BaseBroker = require('models/auth_brokers/base');
   var chai = require('chai');
-  var ChallengeReasons = require('lib/challenge-reasons');
+  var VerificationReasons = require('lib/verification-reasons');
   var Duration = require('duration');
   var FxaClient = require('lib/fxa-client');
   var Metrics = require('lib/metrics');
@@ -23,8 +23,8 @@ define(function (require, exports, module) {
   var View = require('views/confirm');
   var WindowMock = require('../../mocks/window');
 
-  var SIGNIN_REASON = ChallengeReasons.SIGN_IN;
-  var SIGNUP_REASON = ChallengeReasons.SIGN_UP;
+  var SIGNIN_REASON = VerificationReasons.SIGN_IN;
+  var SIGNUP_REASON = VerificationReasons.SIGN_UP;
 
   var assert = chai.assert;
 
@@ -163,7 +163,7 @@ define(function (require, exports, module) {
 
         describe('sign in', function () {
           beforeEach(function () {
-            model.set('type', ChallengeReasons.SIGN_IN);
+            model.set('type', VerificationReasons.SIGN_IN);
 
             return view.render();
           });

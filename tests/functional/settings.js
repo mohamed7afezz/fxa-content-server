@@ -8,14 +8,10 @@ define([
   'require',
   'intern/node_modules/dojo/node!xmlhttprequest',
   'app/bower_components/fxa-js-client/fxa-client',
-  'app/scripts/lib/constants',
   'tests/lib/helpers',
-  'tests/functional/lib/helpers',
-  'tests/functional/lib/fx-desktop'
+  'tests/functional/lib/helpers'
 ], function (intern, registerSuite, require, nodeXMLHttpRequest,
-      FxaClient, Constants, TestHelpers, FunctionalHelpers, FxDesktopHelpers) {
-  var listenForFxaCommands = FxDesktopHelpers.listenForFxaCommands;
-  var testIsBrowserNotifiedOfLogin = FxDesktopHelpers.testIsBrowserNotifiedOfLogin;
+      FxaClient, TestHelpers, FunctionalHelpers) {
 
   var config = intern.config;
   var AUTH_SERVER_ROOT = config.fxaAuthRoot;

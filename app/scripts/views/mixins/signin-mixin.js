@@ -8,8 +8,9 @@ define(function (require, exports, module) {
   'use strict';
 
   var AuthErrors = require('lib/auth-errors');
-  var ChallengeReasons = require('lib/challenge-reasons');
   var p = require('lib/promise');
+  var VerificationMethods = require('lib/verification-methods');
+  var VerificationReasons = require('lib/verification-reasons');
 
   module.exports = {
     /**
@@ -59,18 +60,19 @@ define(function (require, exports, module) {
 
     onSignInSuccess: function (account) {
       if (! account.get('verified')) {
-        var challengeMethod = account.get('challengeMethod');
-        var challengeReason = account.get('challengeReason');
+        var verificationMethod = account.get('verificationMethod');
+        var verificationReason = account.get('verificationReason');
 
-        if (challengeReason === ChallengeReasons.SIGN_IN && challengeMethod === 'email') {
+        if (VerificationReasons.is(verificationReason, 'SIGN_IN') &&
+            VerificationMethods.is(verificationMethod, 'EMAIL')) {
           return this.navigate('confirm', {
             account: account,
-            type: ChallengeReasons.SIGN_IN
+            type: VerificationReasons.SIGN_IN
           });
         } else {
           return this.navigate('confirm', {
             account: account,
-            type: ChallengeReasons.SIGN_UP
+            type: VerificationReasons.SIGN_UP
           });
         }
       }

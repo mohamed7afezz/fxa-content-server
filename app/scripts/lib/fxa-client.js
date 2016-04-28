@@ -132,12 +132,12 @@ define(function (require, exports, module) {
       }
 
       var updatedSessionData = {
-        challengeMethod: accountData.challengeMethod,
-        challengeReason: accountData.challengeReason,
         email: email,
         sessionToken: accountData.sessionToken,
         sessionTokenContext: sessionTokenContext,
         uid: accountData.uid,
+        verificationMethod: accountData.verificationMethod,
+        verificationReason: accountData.verificationReason,
         verified: accountData.verified || false
       };
 

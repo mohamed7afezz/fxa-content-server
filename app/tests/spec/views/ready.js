@@ -7,7 +7,7 @@ define(function (require, exports, module) {
 
   var Able = require('lib/able');
   var chai = require('chai');
-  var ChallengeReasons = require('lib/challenge-reasons');
+  var VerificationReasons = require('lib/verification-reasons');
   var FxaClient = require('lib/fxa-client');
   var OAuthBroker = require('models/auth_brokers/oauth');
   var p = require('lib/promise');
@@ -79,7 +79,7 @@ define(function (require, exports, module) {
 
       for (var type in expectedHeaders) {
         it('renders the correct header for `' + type + '`', function (type) {
-          createView(ChallengeReasons[type]);
+          createView(VerificationReasons[type]);
           return view.render()
             .then(function () {
               assert.ok(view.$(expectedHeaders[type]).length);
@@ -88,7 +88,7 @@ define(function (require, exports, module) {
       }
 
       it('shows service name if available', function () {
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
         relier.set('serviceName', 'Firefox Sync');
 
         return view.render()
@@ -100,7 +100,7 @@ define(function (require, exports, module) {
 
       // regression test for #1216
       it('does not show service name if service is defined but serviceName is not', function () {
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
         view.context = function () {
           return {
             service: 'sync'
@@ -122,7 +122,7 @@ define(function (require, exports, module) {
           }
         });
 
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
 
         return view.render()
           .then(function () {
@@ -141,7 +141,7 @@ define(function (require, exports, module) {
         });
 
         relier.set('service', 'sync');
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
 
         return view.render()
           .then(function () {
@@ -157,7 +157,7 @@ define(function (require, exports, module) {
           }
         });
 
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
 
         return view.render()
           .then(function () {
@@ -167,7 +167,7 @@ define(function (require, exports, module) {
       });
 
       it('formats the service name correctly depending on the always redirect param', function () {
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
         var serviceName = 'Find My Device';
         var redirectUri = 'https://find.firefox.com';
         relier.set('redirectUri', redirectUri);
@@ -193,7 +193,7 @@ define(function (require, exports, module) {
           return false;
         });
 
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
 
         return view.render()
           .then(function () {
@@ -212,7 +212,7 @@ define(function (require, exports, module) {
           }
         });
 
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
         return view.render()
           .then(function () {
             assert.ok(view.$('#sync-preferences').length);
@@ -240,7 +240,7 @@ define(function (require, exports, module) {
           return false;
         });
 
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
 
         return view.submit().then(function () {
           assert.isTrue(metrics.flush.calledOnce);
@@ -264,7 +264,7 @@ define(function (require, exports, module) {
           return p();
         });
 
-        createView(ChallengeReasons.SIGN_UP);
+        createView(VerificationReasons.SIGN_UP);
 
         return view.submit().then(function () {
           assert.isTrue(metrics.flush.calledOnce);

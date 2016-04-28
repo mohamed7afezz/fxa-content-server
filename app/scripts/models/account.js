@@ -17,7 +17,11 @@ define(function (require, exports, module) {
   var p = require('lib/promise');
   var ProfileClient = require('lib/profile-client');
   var ProfileImage = require('models/profile-image');
+<<<<<<< 4dedf324fad4fd237e8a71216a44dd2562947e64
   var SIGN_IN_REASONS = require('lib/sign-in-reasons');
+=======
+  var VerificationReasons = require('lib/verification-reasons');
+>>>>>>> refactor(client): rename Challenge* to Verification*
 
   var NEWSLETTER_ID = Constants.MARKETING_EMAIL_NEWSLETTER_ID;
 
@@ -51,13 +55,13 @@ define(function (require, exports, module) {
 
   var DEFAULTS = _.extend({
     accessToken: undefined,
-    challengeMethod: undefined,
-    challengeReason: undefined,
     customizeSync: undefined,
     declinedSyncEngines: undefined,
     keyFetchToken: undefined,
     // password field intentionally omitted to avoid unintentional leaks
-    unwrapBKey: undefined
+    unwrapBKey: undefined,
+    verificationMethod: undefined,
+    verificationReason: undefined
   }, PERSISTENT);
 
   var ALLOWED_KEYS = Object.keys(DEFAULTS);

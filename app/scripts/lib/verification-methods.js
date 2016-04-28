@@ -3,20 +3,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * List of reasons a user must perform some form of verification.
- * A challenge is currently only an email verification, in the
- * future SMS and TOTP could also be included.
+ * List of methods by which a user can verify.
+ * A user can currently only verify via email.
+ * In the future SMS and TOTP could also be included.
  */
 
 define(function (require, exports, module) {
   'use strict';
 
   return {
-    ACCOUNT_UNLOCK: 'account_unlock',
-    FORCE_AUTH: 'force_auth',
-    PASSWORD_RESET: 'reset_password',
-    SIGN_IN: 'signin',
-    SIGN_UP: 'signup',
+    EMAIL: 'email',
 
     /**
      * Check if the value matches the given type

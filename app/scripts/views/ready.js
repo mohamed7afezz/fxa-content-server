@@ -10,7 +10,6 @@
 define(function (require, exports, module) {
   'use strict';
 
-  var ChallengeReasons = require('lib/challenge-reasons');
   var Cocktail = require('cocktail');
   var Constants = require('lib/constants');
   var FormView = require('views/form');
@@ -19,6 +18,7 @@ define(function (require, exports, module) {
   var ServiceMixin = require('views/mixins/service-mixin');
   var Template = require('stache!templates/ready');
   var Url = require('lib/url');
+  var VerificationReasons = require('lib/verification-reasons');
 
   function t(msg) {
     return msg;
@@ -44,16 +44,16 @@ define(function (require, exports, module) {
       headerTitle: t('Welcome back'),
       readyToSyncText: t('Firefox Sync will resume momentarily'),
     },
-    reset_password: {
-      headerId: 'fxa-reset-password-complete-header',
-      headerTitle: t('Password reset'),
-      readyToSyncText: FX_SYNC_WILL_BEGIN_MOMENTARILY
-    },
     // signin_complete is only shown to Sync for now.
-    signin: {
+    login: {
       headerId: 'fxa-sign-in-complete-header',
       headerTitle: t('Sign-in confirmed'),
       //readyToSyncText: t('You are now ready to use %(serviceName)s')
+      readyToSyncText: FX_SYNC_WILL_BEGIN_MOMENTARILY
+    },
+    reset_password: {
+      headerId: 'fxa-reset-password-complete-header',
+      headerTitle: t('Password reset'),
       readyToSyncText: FX_SYNC_WILL_BEGIN_MOMENTARILY
     },
     signup: {
@@ -139,7 +139,7 @@ define(function (require, exports, module) {
       var redirectUri = this.relier.get('redirectUri');
       var verificationRedirect = this.relier.get('verificationRedirect');
 
-      return !! (this.is(ChallengeReasons.SIGN_UP) &&
+      return !! (this.is(VerificationReasons.SIGN_UP) &&
                  redirectUri &&
                  Url.isNavigable(redirectUri) &&
                  verificationRedirect === Constants.VERIFICATION_REDIRECT_ALWAYS);

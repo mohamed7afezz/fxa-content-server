@@ -9,11 +9,12 @@ define(function (require, exports, module) {
   var assert = require('chai').assert;
   var AuthBroker = require('models/auth_brokers/base');
   var Backbone = require('backbone');
-  var ChallengeReasons = require('lib/challenge-reasons');
   var p = require('lib/promise');
   var Relier = require('models/reliers/relier');
   var SignInMixin = require('views/mixins/signin-mixin');
   var sinon = require('sinon');
+  var VerificationMethods = require('lib/verification-methods');
+  var VerificationReasons = require('lib/verification-reasons');
 
   var RESUME_TOKEN = 'a big hairy resume token';
 
@@ -168,8 +169,8 @@ define(function (require, exports, module) {
       describe('unverified account', function () {
         beforeEach(function () {
           account.set({
-            challengeMethod: 'email',
-            challengeReason: 'signup',
+            verificationMethod: VerificationMethods.EMAIL,
+            verificationReason: VerificationReasons.SIGN_UP,
             verified: false
           });
 
@@ -188,15 +189,15 @@ define(function (require, exports, module) {
           assert.lengthOf(args, 2);
           assert.equal(args[0], 'confirm');
           assert.strictEqual(args[1].account, account);
-          assert.equal(args[1].type, ChallengeReasons.SIGN_UP);
+          assert.equal(args[1].type, VerificationReasons.SIGN_UP);
         });
       });
 
       describe('unverified session', function () {
         beforeEach(function () {
           account.set({
-            challengeMethod: 'email',
-            challengeReason: 'signin',
+            verificationMethod: VerificationMethods.EMAIL,
+            verificationReason: VerificationReasons.SIGN_IN,
             verified: false
           });
 
@@ -215,7 +216,7 @@ define(function (require, exports, module) {
           assert.lengthOf(args, 2);
           assert.equal(args[0], 'confirm');
           assert.strictEqual(args[1].account, account);
-          assert.equal(args[1].type, ChallengeReasons.SIGN_IN);
+          assert.equal(args[1].type, VerificationReasons.SIGN_IN);
         });
       });
 
