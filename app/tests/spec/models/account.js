@@ -345,12 +345,12 @@ define(function (require, exports, module) {
       });
 
       describe('with a sessionToken', function () {
-        describe('unverified', function () {
+        describe('unverified email', function () {
           beforeEach(function () {
             account.set('sessionToken', SESSION_TOKEN);
 
             sinon.stub(fxaClient, 'recoveryEmailStatus', function () {
-              return p({ verified: false });
+              return p({ emailVerified: false, verified: false });
             });
 
             sinon.stub(fxaClient, 'signUpResend', function () {
@@ -372,6 +372,40 @@ define(function (require, exports, module) {
           it('updates the account with the returned data', function () {
             assert.isFalse(account.get('verified'));
             assert.equal(account.get('sessionToken'), SESSION_TOKEN);
+            assert.isTrue(VerificationReasons.is(account.get('verificationReason'), 'SIGN_UP'));
+            assert.isTrue(VerificationMethods.is(account.get('verificationMethod'), 'EMAIL'));
+          });
+        });
+
+        describe('unverified session', function () {
+          beforeEach(function () {
+            account.set('sessionToken', SESSION_TOKEN);
+
+            sinon.stub(fxaClient, 'recoveryEmailStatus', function () {
+              return p({ emailVerified: true, sessionVerified: false, verified: false });
+            });
+
+            sinon.stub(fxaClient, 'signUpResend', function () {
+              return p();
+            });
+
+            return account.signIn(null, relier);
+          });
+
+          it('delegates to the fxaClient', function () {
+            assert.isTrue(
+              fxaClient.recoveryEmailStatus.calledWith(SESSION_TOKEN));
+          });
+
+          it('does not resend a signUp email', function () {
+            assert.isFalse(fxaClient.signUpResend.called);
+          });
+
+          it('updates the account with the returned data', function () {
+            assert.isFalse(account.get('verified'));
+            assert.equal(account.get('sessionToken'), SESSION_TOKEN);
+            assert.isTrue(VerificationReasons.is(account.get('verificationReason'), 'SIGN_IN'));
+            assert.isTrue(VerificationMethods.is(account.get('verificationMethod'), 'EMAIL'));
           });
         });
 
