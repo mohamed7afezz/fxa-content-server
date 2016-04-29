@@ -9,12 +9,14 @@
 define(function (require, exports, module) {
   'use strict';
 
-  return {
+  var Enum = require('lib/enum');
+
+  return new Enum({
     ACCOUNT_UNLOCK: 'account_unlock',
     PASSWORD_CHANGE: 'password_change',
     PASSWORD_CHECK: 'password_check',
     PASSWORD_RESET: 'password_reset',
     SIGN_IN: 'signin'
-  };
+  });
 });
 

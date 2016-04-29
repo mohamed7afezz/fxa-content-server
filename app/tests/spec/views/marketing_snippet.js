@@ -6,6 +6,7 @@ define(function (require, exports, module) {
   'use strict';
 
   var chai = require('chai');
+  var Constants = require('lib/constants');
   var VerificationReasons = require('lib/verification-reasons');
   var Metrics = require('lib/metrics');
   var View = require('views/marketing_snippet');
@@ -41,7 +42,7 @@ define(function (require, exports, module) {
 
         createView({
           language: 'en',
-          service: 'sync',
+          service: Constants.SYNC_SERVICE,
           type: VerificationReasons.SIGN_UP
         });
 
@@ -70,7 +71,7 @@ define(function (require, exports, module) {
 
         createView({
           language: 'en',
-          service: 'sync',
+          service: Constants.SYNC_SERVICE,
           type: VerificationReasons.SIGN_UP
         });
 
@@ -84,7 +85,7 @@ define(function (require, exports, module) {
         windowMock.navigator.userAgent = 'Mozilla/5.0 (Mobile; rv:26.0) Gecko/26.0 Firefox/26.0';
         createView({
           language: 'en',
-          service: 'sync',
+          service: Constants.SYNC_SERVICE,
           type: VerificationReasons.SIGN_UP
         });
 
@@ -110,7 +111,7 @@ define(function (require, exports, module) {
       it('logs the marketing type and link', function () {
         createView({
           language: 'de',
-          service: 'sync',
+          service: Constants.SYNC_SERVICE,
           type: VerificationReasons.SIGN_UP
         });
 
@@ -130,7 +131,7 @@ define(function (require, exports, module) {
       it('is logged', function () {
         createView({
           language: 'de',
-          service: 'sync',
+          service: Constants.SYNC_SERVICE,
           type: VerificationReasons.SIGN_UP
         });
 

@@ -22,6 +22,7 @@ define(function (require, exports, module) {
   var Storage = require('lib/storage');
   var uuid = require('uuid');
   var vat = require('lib/vat');
+  var VerificationReasons = require('lib/verification-reasons');
 
   function createHex32 () {
     // Compose a random 32-byte hex value from two UUIDs
@@ -369,7 +370,7 @@ define(function (require, exports, module) {
       var self = this;
       return account.signIn(password, relier, options)
         .then(function () {
-          var isSignUp =  VerificationReasons.is(self.get('verificationReason'), 'SIGN_UP');
+          var isSignUp =  ! VerificationReasons.is(account.get('verificationReason'), 'SIGN_IN');
           if (! account.get('verified') && isSignUp) {
             return account.retrySignUp(relier, options);
           }

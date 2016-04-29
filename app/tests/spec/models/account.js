@@ -230,7 +230,12 @@ define(function (require, exports, module) {
         describe('unverified, reason === ACCOUNT_UNLOCK', function () {
           beforeEach(function () {
             sinon.stub(fxaClient, 'signIn', function () {
-              return p({ sessionToken: SESSION_TOKEN, verified: false });
+              return p({
+                sessionToken: SESSION_TOKEN,
+                verificationMethod: VerificationMethods.EMAIL,
+                verificationReason: VerificationReasons.SIGN_UP,
+                verified: false
+              });
             });
 
             sinon.stub(fxaClient, 'signUpResend', function () {
@@ -254,8 +259,8 @@ define(function (require, exports, module) {
           it('updates the account with the returned data', function () {
             assert.equal(account.get('sessionToken'), SESSION_TOKEN);
             assert.isFalse(account.get('verified'));
-            assert.equal(account.get('verificationMethod'), VerificationMethods.EMAIL);
-            assert.equal(account.get('verificationReason'), VerificationReasons.SIGN_UP);
+            assert.isTrue(VerificationMethods.is(account.get('verificationMethod'), 'EMAIL'));
+            assert.isTrue(VerificationReasons.is(account.get('verificationReason'), 'SIGN_UP'));
           });
         });
 

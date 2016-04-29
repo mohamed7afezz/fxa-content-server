@@ -30,6 +30,7 @@ function (Translator, Session) {
     '../tests/spec/lib/channels/web',
     '../tests/spec/lib/config-loader',
     '../tests/spec/lib/cropper',
+    '../tests/spec/lib/enum',
     '../tests/spec/lib/environment',
     '../tests/spec/lib/error-utils',
     '../tests/spec/lib/experiment',

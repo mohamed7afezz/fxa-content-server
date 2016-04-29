@@ -9,21 +9,14 @@
 define(function (require, exports, module) {
   'use strict';
 
-  return {
+  var Enum = require('lib/enum');
+
+  return new Enum({
     ACCOUNT_UNLOCK: 'account_unlock',
     FORCE_AUTH: 'force_auth',
     PASSWORD_RESET: 'reset_password',
     SIGN_IN: 'login',
-    SIGN_UP: 'signup',
-
-    /**
-     * Check if the value matches the given type
-     * @param {string} value
-     * @param {string} type
-     * @returns {boolean} true if type matches, false otw.
-     */
-    is: function (value, type) {
-      return value === this[type];
-    }
-  };
+    SIGN_UP: 'signup'
+  });
 });
+

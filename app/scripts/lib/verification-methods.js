@@ -11,17 +11,10 @@
 define(function (require, exports, module) {
   'use strict';
 
-  return {
-    EMAIL: 'email',
+  var Enum = require('lib/enum');
 
-    /**
-     * Check if the value matches the given type
-     * @param {string} value
-     * @param {string} type
-     * @returns {boolean} true if type matches, false otw.
-     */
-    is: function (value, type) {
-      return value === this[type];
-    }
-  };
+  return new Enum({
+    EMAIL: 'email'
+  });
 });
+

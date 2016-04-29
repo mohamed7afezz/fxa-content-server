@@ -20,16 +20,16 @@ define(function (require, exports, module) {
   var VerificationMethods = require('lib/verification-methods');
   var VerificationReasons = require('lib/verification-reasons');
 
-  var NON_SYNC_SERVICE = 'chronical';
+  var AUTH_SERVER_URL = 'http://127.0.0.1:9000';
+  var NON_SYNC_SERVICE = 'chronicle';
+  var REDIRECT_TO = 'https://sync.firefox.com';
   var STATE = 'state';
   var SYNC_SERVICE = 'sync';
-  var REDIRECT_TO = 'https://sync.firefox.com';
-  var AUTH_SERVER_URL = 'http://127.0.0.1:9000';
 
   var assert = chai.assert;
+  var client;
   var email;
   var password = 'password';
-  var client;
   var realClient;
   var relier;
   var resumeToken;
@@ -445,7 +445,8 @@ define(function (require, exports, module) {
             assert.isTrue(realClient.signIn.calledWith(trim(email), password, {
               keys: true,
               reason: SignInReasons.SIGN_IN,
-              service: 'sync'
+              redirectTo: REDIRECT_TO,
+              service: SYNC_SERVICE
             }));
 
             assert.isTrue(result.customizeSync);
@@ -466,7 +467,26 @@ define(function (require, exports, module) {
             assert.isTrue(realClient.signIn.calledWith(trim(email), password, {
               keys: true,
               reason: SignInReasons.PASSWORD_CHANGE,
-              service: 'sync'
+              redirectTo: REDIRECT_TO,
+              service: SYNC_SERVICE
+            }));
+          });
+      });
+
+      it('passes along an optional `resume`', function () {
+        sinon.stub(realClient, 'signIn', function () {
+          return p({});
+        });
+
+
+        return client.signIn(email, password, relier, { resume: 'resume token' })
+          .then(function () {
+            assert.isTrue(realClient.signIn.calledWith(trim(email), password, {
+              keys: false,
+              reason: SignInReasons.SIGN_IN,
+              redirectTo: REDIRECT_TO,
+              resume: 'resume token',
+              service: SYNC_SERVICE
             }));
           });
       });

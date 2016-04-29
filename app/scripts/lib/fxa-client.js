@@ -15,7 +15,7 @@ define(function (require, exports, module) {
   var FxaClient = require('fxaClient');
   var p = require('lib/promise');
   var Session = require('lib/session');
-  var SIGN_IN_REASONS = require('lib/sign-in-reasons');
+  var SignInReasons = require('lib/sign-in-reasons');
 
   function trim(str) {
     return $.trim(str);
@@ -86,7 +86,7 @@ define(function (require, exports, module) {
       return this._getClient()
         .then(function (client) {
           return client.signIn(email, password, {
-            reason: SIGN_IN_REASONS.PASSWORD_CHECK
+            reason: SignInReasons.PASSWORD_CHECK
           })
           .then(function (sessionInfo) {
             // a session was created on the backend to check the user's
@@ -178,7 +178,7 @@ define(function (require, exports, module) {
         .then(function (client) {
           var signInOptions = {
             keys: relier.wantsKeys(),
-            reason: options.reason || SIGN_IN_REASONS.SIGN_IN
+            reason: options.reason || SignInReasons.SIGN_IN
           };
 
           // `service` is sent on signIn to notify users when a new service

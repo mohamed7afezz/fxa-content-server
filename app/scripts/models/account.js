@@ -17,11 +17,7 @@ define(function (require, exports, module) {
   var p = require('lib/promise');
   var ProfileClient = require('lib/profile-client');
   var ProfileImage = require('models/profile-image');
-<<<<<<< 4dedf324fad4fd237e8a71216a44dd2562947e64
-  var SIGN_IN_REASONS = require('lib/sign-in-reasons');
-=======
-  var VerificationReasons = require('lib/verification-reasons');
->>>>>>> refactor(client): rename Challenge* to Verification*
+  var SignInReasons = require('lib/sign-in-reasons');
 
   var NEWSLETTER_ID = Constants.MARKETING_EMAIL_NEWSLETTER_ID;
 
@@ -609,7 +605,7 @@ define(function (require, exports, module) {
             newPassword,
             relier,
             {
-              reason: SIGN_IN_REASONS.PASSWORD_CHANGE,
+              reason: SignInReasons.PASSWORD_CHANGE,
               sessionTokenContext: self.get('sessionTokenContext')
             }
           );
@@ -666,7 +662,7 @@ define(function (require, exports, module) {
             password,
             relier,
             {
-              reason: SIGN_IN_REASONS.PASSWORD_RESET
+              reason: SignInReasons.PASSWORD_RESET
             }
           );
         })
