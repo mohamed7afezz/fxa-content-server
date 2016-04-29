@@ -884,6 +884,25 @@ define([
   }
 
   /**
+   * Check whether an input element's text equals the expected value.
+   * Comparison is case sensitive
+   *
+   * @param {string} selector
+   * @param {string} expected
+   * @returns {promise} rejects if test fails.
+   */
+  function testElementTextEquals(selector, expected) {
+    return function () {
+      return this.parent
+        .findByCssSelector(selector)
+        .getVisibleText()
+        .then(function (resultText) {
+          assert.equal(resultText, expected);
+        })
+        .end();
+    };
+  }
+  /**
    * Check whether an input element's text includes the expected value.
    * Comparison is case insensitive
    *
@@ -1206,6 +1225,7 @@ define([
     testAttributeMatches: testAttributeMatches,
     testElementDisabled: testElementDisabled,
     testElementExists: testElementExists,
+    testElementTextEquals: testElementTextEquals,
     testElementTextInclude: testElementTextInclude,
     testElementValueEquals: testElementValueEquals,
     testErrorTextInclude: testErrorTextInclude,

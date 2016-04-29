@@ -413,7 +413,7 @@ define(function (require, exports, module) {
           beforeEach(function () {
             account.set('sessionToken', SESSION_TOKEN);
             sinon.stub(fxaClient, 'recoveryEmailStatus', function () {
-              return p({ verified: true });
+              return p({ emailVerified: true, sessionVerified: true, verified: true });
             });
 
             return account.signIn(null, relier);

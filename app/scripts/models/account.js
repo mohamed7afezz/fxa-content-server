@@ -326,9 +326,11 @@ define(function (require, exports, module) {
           return self._fxaClient.recoveryEmailStatus(sessionToken)
             .then(function (sessionStatus) {
               if (! sessionStatus.verified) {
-                // This is a little bit unnatural. /recovery_email/status returns two fields,
-                // `emailVerified` and `sessionVerified`. The client side depends on a reason
-                // to show the correct UI. Convert `emailVerified` to a `verificationReason`.
+                // This is a little bit unnatural. /recovery_email/status
+                // returns two fields, `emailVerified` and
+                // `sessionVerified`. The client side depends on a reason
+                // to show the correct UI. Convert `emailVerified` to
+                // a `verificationReason`.
                 var verificationReason = sessionStatus.emailVerified ?
                                          VerificationReasons.SIGN_IN :
                                          VerificationReasons.SIGN_UP;
@@ -340,7 +342,9 @@ define(function (require, exports, module) {
                 };
               }
 
-              return sessionStatus;
+              // /recovery_email/status returns `emailVerified` and
+              // `sessionVerified`, we don't want those.
+              return _.pick(sessionStatus, 'email', 'verified');
             });
         } else {
           throw AuthErrors.toError('UNEXPECTED_ERROR');
