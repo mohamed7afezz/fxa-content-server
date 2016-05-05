@@ -16,6 +16,8 @@ define(function (require, exports, module) {
   var p = require('lib/promise');
   var Session = require('lib/session');
   var SignInReasons = require('lib/sign-in-reasons');
+  var VerificationReasons = require('lib/verification-reasons');
+  var VerificationMethods = require('lib/verification-methods');
 
   function trim(str) {
     return $.trim(str);
@@ -198,6 +200,16 @@ define(function (require, exports, module) {
           return client.signIn(email, password, signInOptions);
         })
         .then(function (accountData) {
+          if (! accountData.verified &&
+              ! accountData.hasOwnProperty('verificationReason')) {
+            // Set a default verificationReason to `SIGN_UP` to allow
+            // staged rollouts of servers. To handle calls to the
+            // legacy /account/login that lacks a verificationReason,
+            // assume SIGN_UP if the account is not verified.
+            accountData.verificationReason = VerificationReasons.SIGN_UP;
+            accountData.verificationMethod = VerificationMethods.EMAIL;
+          }
+
           return self._getUpdatedSessionData(email, relier, accountData, options);
         });
     },

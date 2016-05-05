@@ -338,13 +338,37 @@ define(function (require, exports, module) {
           });
       });
 
+      describe('legacy unverified account responses', function () {
+        var sessionData;
+
+        beforeEach(function () {
+          sinon.stub(realClient, 'signIn', function () {
+            return p({
+              verified: false
+            });
+          });
+
+          return client.signIn(email, password, relier)
+            .then(function (_sessionData) {
+              sessionData = _sessionData;
+            });
+        });
+
+        it('are converted to contain a `verificationMethod` and `verificationResaon`', function () {
+          assert.isFalse(sessionData.verified);
+          assert.equal(sessionData.verificationMethod, VerificationMethods.EMAIL);
+          assert.equal(sessionData.verificationReason, VerificationReasons.SIGN_UP);
+        });
+      });
+
       it('Sync signIn signs in a user with email/password and returns keys', function () {
         sinon.stub(realClient, 'signIn', function () {
           return p({
             keyFetchToken: 'keyFetchToken',
             unwrapBKey: 'unwrapBKey',
             verificationMethod: VerificationMethods.EMAIL,
-            verificationReason: VerificationReasons.SIGN_IN
+            verificationReason: VerificationReasons.SIGN_IN,
+            verified: false
           });
         });
 
@@ -370,6 +394,7 @@ define(function (require, exports, module) {
             assert.isTrue(sessionData.customizeSync);
             assert.equal(sessionData.keyFetchToken, 'keyFetchToken');
             assert.equal(sessionData.unwrapBKey, 'unwrapBKey');
+            assert.isFalse(sessionData.verified);
             assert.equal(sessionData.verificationMethod, VerificationMethods.EMAIL);
             assert.equal(sessionData.verificationReason, VerificationReasons.SIGN_IN);
           });
