@@ -53,8 +53,7 @@ define(function (require, exports, module) {
     SIGN_IN: {
       headerId: 'fxa-sign-in-complete-header',
       headerTitle: t('Sign-in confirmed'),
-      //readyToSyncText: t('You are now ready to use %(serviceName)s')
-      readyToSyncText: FX_SYNC_WILL_BEGIN_MOMENTARILY
+      readyToSyncText: t('You are now ready to use %(serviceName)s')
     },
     SIGN_UP: {
       headerId: 'fxa-sign-up-complete-header',

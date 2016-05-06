@@ -40,11 +40,13 @@ define(function (require, exports, module) {
     _shouldShowSignUpMarketing: function () {
       var isFirefoxMobile = this._isFirefoxMobile();
       var isSignUp = VerificationReasons.is(this._type, 'SIGN_UP');
+      var isSignIn = VerificationReasons.is(this._type, 'SIGN_IN');
+
       var isSync = this._service === Constants.SYNC_SERVICE;
 
-      // If the user is completing a signup for sync and ALWAYS
+      // If the user is completing a signup or signin for sync, ALWAYS
       // show the marketing snippet.
-      return isSignUp && isSync && ! isFirefoxMobile;
+      return (isSignUp || isSignIn) && isSync && ! isFirefoxMobile;
     },
 
     _isFirefoxMobile: function () {
