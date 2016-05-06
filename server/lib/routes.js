@@ -22,15 +22,16 @@ module.exports = function (config, i18n) {
   var STATIC_RESOURCE_URL = config.get('static_resource_url');
 
   var routes = [
-    require('./routes/get-terms-privacy')(i18n),
-    require('./routes/get-index')(config),
-    require('./routes/get-ver.json'),
+    require('./routes/get-400.js')(config),
     require('./routes/get-client.json')(i18n),
     require('./routes/get-config')(i18n),
+    require('./routes/get-index')(config),
     require('./routes/get-metrics-errors')(),
     require('./routes/get-openid-authenticate')(config),
     require('./routes/get-openid-configuration')(config),
     require('./routes/get-openid-login')(config),
+    require('./routes/get-terms-privacy')(i18n),
+    require('./routes/get-ver.json'),
     require('./routes/get-version.json'),
     require('./routes/post-metrics')(),
     require('./routes/post-metrics-errors')()
@@ -185,35 +186,10 @@ module.exports = function (config, i18n) {
       });
     }
 
-    // we always want to handle these so we can do some logging.
-    app.get('/400.html', function (req, res) {
-      res.removeHeader('x-frame-options');
-      logger.error('400.html', {
-        client_id: req.query.client_id, //eslint-disable-line camelcase
-        context: req.query.context,
-        errno: req.query.errno,
-        message: req.query.message,
-        namespace: req.query.namespace,
-        param: req.query.param
-      });
-      return res.render('400', {
-        message: req.query.message,
-        staticResourceUrl: STATIC_RESOURCE_URL
-      });
-    });
-
     app.get('/500.html', function (req, res) {
       res.removeHeader('x-frame-options');
-      logger.error('500.html', {
-        context: req.query.context,
-        errno: req.query.errno,
-        message: req.query.message,
-        namespace: req.query.namespace
-      });
       return res.render('500', { staticResourceUrl: STATIC_RESOURCE_URL });
     });
-
   };
-
 };
 
